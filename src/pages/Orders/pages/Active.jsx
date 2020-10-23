@@ -1,10 +1,14 @@
-import React from "react";
+import React, {useState} from "react";
 import { Text, View, StyleSheet } from "react-native";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView, TouchableHighlight } from "react-native-gesture-handler";
 import Svg, { Path } from "react-native-svg";
+import { createStackNavigator } from '@react-navigation/stack';
+import { NewOrder } from '../../';
 
-const SendButton = () => (
-  <View style={styles.btn}>
+const Stack = createStackNavigator();
+
+const SendButton = ({title, description, onClick}) => (
+  <React.Fragment>
     <View style={styles.btnLogo}>
       <Svg
         width="26"
@@ -22,15 +26,24 @@ const SendButton = () => (
       </Svg>
     </View>
     <View>
-      <Text style={styles.btnTitle}>Отправить посылку</Text>
+      <Text style={styles.btnTitle}>{title}</Text>
       <Text style={styles.btnSubtitle}>
-        Курьер отвезет документы, подарок и все, что пожелаете.
+        {description}
       </Text>
     </View>
-  </View>
+  </React.Fragment>
 );
 
 function Active() {
+  const [pressed, setPressed] = useState(false);
+
+  const _onHideUnderlay = () => {
+    setPressed(false);
+  }
+  const _onShowUnderlay = () => {
+    setPressed(true);
+  }
+
   return (
     <ScrollView
       contentContainerStyle={{
@@ -41,8 +54,24 @@ function Active() {
       }}
     >
       <View style={styles.container}>
-        <Text>Активных заказов нет</Text>
-        <SendButton />
+        <Text style={{marginBottom: 10}}>Активных заказов нет</Text>
+        <TouchableHighlight
+          activeOpacity={0}
+          underlayColor="#FFFFFF"
+          style={
+            pressed ? styles.btnActive : styles.btn
+          }
+          onHideUnderlay={_onHideUnderlay.bind(this)}
+          onShowUnderlay={_onShowUnderlay.bind(this)}
+          onPress={() => {
+            
+          }}
+        >
+          <SendButton
+            title='Отправить посылку'
+            description='Курьер отвезет документы, подарок и все, что пожелаете.'
+          />
+        </TouchableHighlight>
       </View>
     </ScrollView>
   );
@@ -62,22 +91,29 @@ const styles = StyleSheet.create({
   btn: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
     width: "100%",
     padding: 25,
-    marginVertical: 10,
+    marginBottom: 25,
     flexDirection: "row",
     borderColor: "#ff5c00",
     borderRadius: 20,
     borderWidth: 2,
     borderStyle: 'solid',
-    overflow: "hidden",
-    backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOffset: { width: 10, height: 10 },
-    shadowOpacity: 0.8,
-    shadowRadius: 40,
-    elevation: 3
+    backgroundColor: "white"
+  },
+  btnActive: {
+    display: "flex",
+    alignItems: "center",
+    width: "100%",
+    padding: 25,
+    marginBottom: 25,
+    flexDirection: "row",
+    borderColor: "#ff5c00",
+    borderRadius: 20,
+    borderWidth: 2,
+    borderStyle: 'solid',
+    backgroundColor: "white",
+    transform: [{scale: 0.99}]
   },
   btnLogo: {
     display: "flex",
@@ -90,6 +126,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f1f1f1"
   },
   btnTitle: {
+      width: 173,
       fontSize: 16,
       fontWeight: '900',
       marginBottom: 5,
